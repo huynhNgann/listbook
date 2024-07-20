@@ -29,9 +29,11 @@ class BookController extends Controller
      */
     public function create()
     {
-        $author=$this->bookService->getAllAuthor();
-        $category=$this->bookService->getAllCategory();
-        return view('book.create',compact('author','category'));
+       $author=$this->bookService->getAllAuthors();
+       $category=$this->bookService->getAllCategories(); 
+       $books = $this->bookService->getAllBook(); 
+       // $category=$this->bookService->getAllCategories();
+        return view('book.create',compact('books','author','category'));
     }
     /**
      * Store a newly created resource in storage.
@@ -46,29 +48,8 @@ class BookController extends Controller
          return back()->with('error', $book['message']);
    //   dd($inputs);
     }
-    /**
-     * Display the specified resource.
-     */
-    /**
-     * Show the form for editing the specified resource.
-     */
-
-    /**
-     * Display the specified resource.
-      */
-    // public function show($id)
-    // {
-    //     $author= $this->bookService->getAllBook()->find($id);
-    //     return view('author.show', compact('author'));
-    // }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(int $id)
     {
-        $author=$this->bookService->getAllAuthor();
-        $category=$this->bookService->getAllCategory();
         $find = $this->bookService->find($id);
         if ($find['status']) {
             $data['book'] = $find['book'];

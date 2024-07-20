@@ -22,16 +22,12 @@ class BookService
     public function getAllBook(){
         return $this->bookRepository->getAllBook();
     }
-    public function getAllCategory(){
-        return $this->bookRepository->getAllCategory();
-    }    
-    public function getAllAuthor(){
-        return $this->bookRepository->getAllAuthor();
+    public function getAllCategories(){
+        return $this->bookRepository->getAllCategories();
     }
-    // public function getByAuthor(){
-    //     return $this->bookRepository->getByAuthor();
-    // }
-
+    public function getAllAuthors(){
+        return $this->bookRepository->getAllAuthors();
+    }
     public function getAllHavePaginate()
     {
         return $this->bookRepository->getAllHavePaginate();

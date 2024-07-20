@@ -4,7 +4,7 @@ namespace App\Http\Requests\Book;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +23,13 @@ class CreateRequest extends FormRequest
     {
         return [
              "title"=> "required",
-          
+            "author"=>"required",
         ];
     }
     public function message(){
-        return [
-            'title.require'=>'Please enter a title name'
+        return[
+            'name.required'=>'Please enter a title',
+            'biography.required'=>'Please enter a biography',
         ];
     }
   

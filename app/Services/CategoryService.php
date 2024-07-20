@@ -8,12 +8,10 @@ use Illuminate\Support\Facades\Log;
 class CategoryService
 {
     private $categoryRepository;
-
     public function __construct(CategoryRepository $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
     }
-
     public function getAllCategory()
     {
         return $this->categoryRepository->getAllCategory();

@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Book;
 use App\Models\Category;
 use App\Models\Author;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -12,49 +13,26 @@ class BookRepository
 {
     protected $book,$author,$category;
 
-    public function __construct(Book $book,Author $author,Category $category)
+    public function __construct(Book $book,Category $category,Author $author)
     {
         $this->book = $book;
-        $this->author=$author;
         $this->category=$category;
+        $this->author=$author;
     }
     public function getAllBook()
     {
-        return $this->book->join('authors', 'books.author_id', '=', 'authors.id')
-        ->join('categories', 'books.category_id', '=', 'categories.id')
-        ->select('books.*', 'authors.name as author_name', 'categories.name as category_name')
-        ->paginate(5);
+        return $this->book->with('categories','authors')
+        ->select('books.*','categories.*','authors.*', 'authors.name as author_name', 'categories.name as category_name')->paginate(1);
     }
-    public function getAllCategory(){
-        return $this->category->all();
-    }
-    public function getAllAuthor(){
-        return $this->author->all();
-    }
-    public function getByAuthor($author_id)
+    public function getAllCategories()
     {
-        try {
-            $author_id=$this->author->id->get();
-            $result = $this->book->where('author_id',$author_id)
-            ->where('id','==',$this->author->id)
-            ->get();
-            return $result;
-        } catch (\Throwable $th) {
-            Log::error($th);
-            return false;
-        }
+      //  return $this->book->with('categories')->get();
+        return $this->category->get();
+        //return Category::all();
     }
-    public function getWhereCategory($category_id)
-    {
-        try {
-            $result = $this->book->where('category_id',$category_id)
-            ->where('id','==',$this->category->id)
-            ->get();
-            return $result;
-        } catch (\Throwable $th) {
-            Log::error($th);
-            return false;
-        }
+    public function getAllAuthors(){
+        //return $this->book->with('authors')->get();
+       return $this->author->get();
     }
     public function getAllHavePaginate()
     {

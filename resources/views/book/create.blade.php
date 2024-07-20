@@ -26,26 +26,22 @@
                                 </span>
                             @enderror
                         </div>
+                        
                         <div class="form-group">
                             <label>Author: <span class="text-danger">*</span></label>
                             <select id="author_id" name="author_id">
-                                @forelse($author as $ath)
-                                    <option value="{{ $ath->id }}" name="author_id" id="">
-                                        {{ $ath->name }}</option>
-                                @empty
-                                    <option>Không có thông tin của tác giả</option>
-                                @endforelse
+                                @foreach($author as $book)
+                                    <option value="{{ $book->id }}" name="author_id">{{ $book->name }}</option>
+                                @endforeach
                             </select>
 
                         </div>
                         <div class="form-group">
                             <label>Category: <span class="text-danger">*</span></label>
                             <select name="category_id" id="category_id">
-                                @forelse($category as $cate)
-                                    <option value="{{ $cate->id }}" name="category_id">{{ $cate->name }}</option>
-                                @empty
-                                    <option>Không có thông tin của tác giả</option>
-                                @endforelse
+                                @foreach($category as $book)
+                                    <option value="{{ $book->id }}" name="category_id">{{ $book->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="form-group">
