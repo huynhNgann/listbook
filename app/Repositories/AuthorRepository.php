@@ -14,9 +14,10 @@ class AuthorRepository
     {
         $this->author = $author;
     }
+
     public function getAllAuthor()
     {
-        return $this->author->all();
+        return $this->author->get();
     }
 
     public function getAllHavePaginate()
@@ -29,15 +30,11 @@ class AuthorRepository
         DB::beginTransaction();
         try {
             $author = $this->author->create($data);
-            if ($author) {
-                DB::commit();
-                return true;
-            }
-            DB::rollBack();
-            return false;
+            DB::commit();
+            return $author;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error($e);
+            Log::error('Error creating author: ' . $e->getMessage());
             return false;
         }
     }
@@ -47,10 +44,11 @@ class AuthorRepository
         try {
             return $this->author->find($id);
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error('Error finding author: ' . $e->getMessage());
             return false;
         }
     }
+
     public function update($id, $data)
     {
         DB::beginTransaction();
@@ -65,10 +63,11 @@ class AuthorRepository
             return false;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error($e);
+            Log::error('Error updating author: ' . $e->getMessage());
             return false;
         }
     }
+
     public function delete(int $id)
     {
         DB::beginTransaction();
@@ -83,7 +82,7 @@ class AuthorRepository
             return false;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error($e);
+            Log::error('Error deleting author: ' . $e->getMessage());
             return false;
         }
     }

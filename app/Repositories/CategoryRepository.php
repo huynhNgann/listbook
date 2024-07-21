@@ -14,6 +14,7 @@ class CategoryRepository
     {
         $this->category = $category;
     }
+
     public function getAllCategory()
     {
         return $this->category->all();
@@ -23,20 +24,17 @@ class CategoryRepository
     {
         return $this->category->paginate(5);
     }
+
     public function create($data)
     {
         DB::beginTransaction();
         try {
             $category = $this->category->create($data);
-            if ($category) {
-                DB::commit();
-                return true;
-            }
-            DB::rollBack();
-            return false;
+            DB::commit();
+            return $category;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error($e);
+            Log::error('Error creating category: ' . $e->getMessage());
             return false;
         }
     }
@@ -46,10 +44,11 @@ class CategoryRepository
         try {
             return $this->category->find($id);
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error('Error finding category: ' . $e->getMessage());
             return false;
         }
     }
+
     public function update($id, $data)
     {
         DB::beginTransaction();
@@ -64,15 +63,16 @@ class CategoryRepository
             return false;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error($e);
+            Log::error('Error updating category: ' . $e->getMessage());
             return false;
         }
     }
+
     public function delete(int $id)
     {
         DB::beginTransaction();
         try {
-            $category= $this->find($id);
+            $category = $this->find($id);
             if ($category) {
                 $category->delete();
                 DB::commit();
@@ -82,7 +82,7 @@ class CategoryRepository
             return false;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error($e);
+            Log::error('Error deleting category: ' . $e->getMessage());
             return false;
         }
     }

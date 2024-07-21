@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\BookRepository;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class BookService
 {
@@ -13,24 +14,16 @@ class BookService
     {
         $this->bookRepository = $bookRepository;
     }
+
     /**
-     * Function: get all book
+     * Function: get all books
      * Created at: 04/07/2024
      * Created by: Ngân
      * @return object
      */
-    public function getAllBook(){
-        return $this->bookRepository->getAllBook();
-    }
-    public function getAllCategories(){
-        return $this->bookRepository->getAllCategories();
-    }
-    public function getAllAuthors(){
-        return $this->bookRepository->getAllAuthors();
-    }
-    public function getAllHavePaginate()
+    public function getAllBook()
     {
-        return $this->bookRepository->getAllHavePaginate();
+        return $this->bookRepository->getAllBook();
     }
 
     /**
@@ -49,57 +42,69 @@ class BookService
                 'message' => 'Inputs empty.'
             ];
         }
+
         try {
-            $result = [
-                'status' => false,
-                'message' => 'Create new book unsuccessfully. Please check again.'
-            ];
             $book = $this->bookRepository->create($data);
-            if (!empty($book)) {
-                $result = [
+            if ($book) {
+                return [
                     'status' => true,
                     'message' => 'Create new book successfully.'
                 ];
+            } else {
+                return [
+                    'status' => false,
+                    'message' => 'Create new book unsuccessfully. Please check again.'
+                ];
             }
-            return $result;
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error('Error creating book: ' . $e->getMessage());
             return [
                 'status' => false,
                 'message' => 'A system error has occurred. Please check logs.'
             ];
         }
     }
+
     /**
-     * Function create find id_book
+     * Function find book by id
      * Created at: 06/07/2024
      * Created by: Ngân
      * 
-     * @param int book_id
+     * @param int $book_id
      * @return array
      */
     public function find($book_id = 0)
     {
         $book = $this->bookRepository->find($book_id);
-        $result = [
-            'status' => false,
-        ];
-        if (empty($book))
-            $result['message'] = 'Book not found.';
-        else {
-            $result = [
+        if (empty($book)) {
+            return [
+                'status' => false,
+                'message' => 'Book not found.'
+            ];
+        } else {
+            return [
                 'status' => true,
-                'book' => $book
+                'book' => $this->formatData($book)
             ];
         }
-        return $result;
     }
+
+    public function formatData($book = null)
+    {
+        if (empty($book)) return false;
+        if ($book->published_at) {
+            $book->published_at = Carbon::parse($book->published_at)->format('Y-m-d');
+        }
+        return $book;
+    }
+
     /**
-     * Function create update book
+     * Function update book
      * Created at: 06/07/2024
      * Created by: Ngân
      * 
-     * @param int book_id, array
+     * @param int $book_id
+     * @param array $data
      * @return array
      */
     public function update($book_id = 0, array $data = array())
@@ -110,47 +115,58 @@ class BookService
                 'message' => 'Inputs empty.'
             ];
         }
-       // $data['author_id']=$this->bookRepository->getWhereAuthor($book_id);
-      //  $data['category_id']=$this->bookRepository->getWhereCategory($book_id);
 
-        $book = $this->bookRepository->update($book_id,$data);
-        
-            if (!empty($book)) {
-                $result = [
+        try {
+            $bookUpdated = $this->bookRepository->update($book_id, $data);
+            if ($bookUpdated) {
+                return [
                     'status' => true,
-                    'message' => 'Create new book successfully.'
+                    'message' => 'Update book successfully.'
                 ];
-            }else{
-                $result = [
+            } else {
+                return [
                     'status' => false,
-                    'message' => 'Create new book unsuccessfully. Please check again.'
+                    'message' => 'Update book unsuccessfully. Please check again.'
                 ];
             }
-            return $result;
+        } catch (\Exception $e) {
+            Log::error('Error updating book: ' . $e->getMessage());
+            return [
+                'status' => false,
+                'message' => 'A system error has occurred. Please check logs.'
+            ];
         }
-    
+    }
+
     /**
      * Function delete book
      * Created at: 06/07/2024
      * Created by: Ngân
      * 
-     * @param int book_id
+     * @param int $book_id
      * @return array
      */
     public function delete($book_id = 0)
     {
-        $book_deleted = $this->bookRepository->delete($book_id);
-        if ($book_deleted) {
-            $result = [
-                'status' => true,
-                'message' => 'Delete book successfully'
-            ];
-        } else {
-            $result = [
+        try {
+            $bookDeleted = $this->bookRepository->delete($book_id);
+            if ($bookDeleted) {
+                return [
+                    'status' => true,
+                    'message' => 'Delete book successfully.'
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'message' => 'Delete book unsuccessfully. Please check again.'
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::error('Error deleting book: ' . $e->getMessage());
+            return [
                 'status' => false,
-                'message' => 'Delete book unsuccessfully. Please check again.'
+                'message' => 'A system error has occurred. Please check logs.'
             ];
         }
-        return $result;
     }
 }

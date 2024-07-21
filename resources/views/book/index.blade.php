@@ -3,11 +3,13 @@
     <div class="content-wrapper">
         <section class="content-header">
             <div class="container-fluid">
-                <div class="justify-end ">
-                    <div class="col" style="margin-bottom:10px;">
-                        <a class="btn btn-sm btn-success" href={{ route('book.create') }}>Add New Book</a>
+                @if (auth()->check())
+                    <div class="justify-end ">
+                        <div class="col" style="margin-bottom:10px;">
+                            <a class="btn btn-sm btn-success" href={{ route('book.create') }}>Add New Book</a>
+                        </div>
                     </div>
-                </div>
+                @endif
                 @if (session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
@@ -19,6 +21,7 @@
                     </div>
                 @endif
                 <div class="col-10">
+                    {{-- @dd(auth()->check()) --}}
                     <table class="table table-bordered table-hover" style="width:100%;" id="table_book">
                         <thead>
                             <tr>
@@ -26,7 +29,7 @@
                                 <th>Title</th>
                                 <th>Author</th>
                                 <th>Category</th>
-                                <th>ISBN</th>
+                                <th>Book Code</th>
                                 <th>Published At</th>
                                 <th>Action</th>
                             </tr>
@@ -36,28 +39,49 @@
                                 <tr class="sid{{ $book->id }}">
                                     <td>{{ ++$key }}</td>
                                     <td>{{ $book->title }}</td>
-                                    <td>{{ $book->author_name }}</td>
-                                    <td>{{ $book->category_name }}</td>
-                                    <td>{{ $book->isbn }}</td>
-                                    <td>{{ $book->published_at}}</td>
                                     <td>
-                                        <a href="{{ route('book.edit', $book->id) }}"
-                                            class="btn btn-primary btn-sm">Edit</a>
-                                        <a href="#" id="{{ $book->id }}" class="text-danger mx-1 deleteIcon"
-                                            style="margin-top:10px;display:inline-block;"><i class="bi-trash h4"></i>
-                                            <form action="{{ route('book.destroy', $book->id) }}" method="post">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                            </form>
-                                        </a>
+                                        @if(!empty($book->author->name))
+                                            {{$book->author->name}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if(!empty($book->category->name))
+                                        {{ $book->category->name }}
+                                        @endif
+                                    </td>
+                                    <td>{{ $book->isbn }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($book->published_at)->format('Y-m-d') }}</td>
+                                    <td>
+                                        @if (auth()->check() && auth()->user()->role->name == 'admin')
+                                            <a href="{{ route('book.edit', $book->id) }}"
+                                                class="btn btn-primary">
+                                                <i class="fa fa-pen"></i>
+                                            </a>
+                                            <a class="btn btn-danger" onclick="return confirm('Are you sure?')"
+                                                href="{{ route('book.destroy', $book->id) }}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        @endif
+
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                {{$books->links()}}
+                {{ $books->links() }}
             </div>
         </section>
     @endsection
+    <script>
+        var deleteLinks = document.querySelectorAll('.btn-delete-js');
+        for (var i = 0; i < deleteLinks.length; i++) {
+            deleteLinks[i].addEventListener('click', function(event) {
+                event.preventDefault();
+                var choice = confirm(this.getAttribute('data-confirm'));
+                if (choice) {
+                    window.location.href = this.getAttribute('href');
+                }
+            });
+        }
+    </script>

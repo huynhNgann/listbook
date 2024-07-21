@@ -13,6 +13,13 @@ class AuthorController extends Controller
     public function __construct(AuthorService $authorService)
     {
         $this->authorService = $authorService;
+        $this->middleware('admin', [
+            'only' => [
+                'update', // Could add bunch of more methods too
+                'edit',
+                'destroy'
+            ]
+        ]);
     }
     /**
      * Display a listing of the resource.
@@ -53,11 +60,11 @@ class AuthorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
-        $author= $this->authorService->getAllAuthor()->find($id);
-        return view('author.show', compact('author'));
-    }
+    // public function show($id)
+    // {
+    //     $author= $this->authorService->getAllAuthor()->find($id);
+    //     return view('author.show', compact('author'));
+    // }
 
     /**
      * Show the form for editing the specified resource.

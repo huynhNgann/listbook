@@ -5,23 +5,37 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\Book\CreateRequest;
 use App\Services\BookService;
+use App\Services\CategoryService;
+use App\Services\AuthorService;
 
-class BookController extends Controller
+
+class BookController extends Controller 
 {
-    protected $bookService;
+ 
+    private $bookService;
+    private $categoryService;
+    private $authorService;
 
-    public function __construct(BookService $bookService)
+    public function __construct(BookService $bookService,CategoryService $categorService,AuthorService $authorService)
     {
         $this->bookService = $bookService;
+        $this->categoryService=$categorService;
+        $this->authorService=$authorService;
+        $this->middleware('admin', [
+            'only' => [
+                'update', // Could add bunch of more methods too
+                'edit',
+                'destroy'
+            ]
+        ]);
+
     }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // $author=$this->bookService->getByAuthor();
         $books = $this->bookService->getAllBook(); 
-        // $data['books'] = $this->bookService->getAllHavePaginate();
         return view('book.index', compact('books'));
     }
     /**
@@ -29,8 +43,8 @@ class BookController extends Controller
      */
     public function create()
     {
-       $author=$this->bookService->getAllAuthors();
-       $category=$this->bookService->getAllCategories(); 
+       $author=$this->authorService->getAllAuthor();
+       $category=$this->categoryService->getAllCategory();
        $books = $this->bookService->getAllBook(); 
        // $category=$this->bookService->getAllCategories();
         return view('book.create',compact('books','author','category'));
@@ -50,10 +64,14 @@ class BookController extends Controller
     }
     public function edit(int $id)
     {
+        
         $find = $this->bookService->find($id);
         if ($find['status']) {
+            $data['author']=$this->authorService->getAllAuthor();
+            $data['category']=$this->categoryService->getAllCategory();
             $data['book'] = $find['book'];
-            return view('book.edit', $data,compact('author','category'));
+           // dd($data['book']);
+            return view('book.edit', $data);
         }
         return redirect()->route('book.index')->with('error', $find['message']);
     }

@@ -37,11 +37,11 @@
                             @enderror
                         </div>
                         <div class="col-12" style="display: flex; justify-content: space-between;">
-                          <div class="col-6" style="padding-right: 20px;margin-left: -20px">
+                          <div>
                               <a class="btn btn-warning" href="{{ route('author.index') }}">Back</a>
                           </div>
-                          <div class="col-6" style="padding-left: 200px;margin-right: -20px;">
-                              <button type="submit" class="btn btn-primary">Create Author</button>
+                          <div class="justify-content-end">
+                              <button type="submit" class="btn btn-primary">Create</button>
                           </div>
                       </div>
                     </form>

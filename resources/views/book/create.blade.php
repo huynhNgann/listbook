@@ -30,8 +30,8 @@
                         <div class="form-group">
                             <label>Author: <span class="text-danger">*</span></label>
                             <select id="author_id" name="author_id">
-                                @foreach($author as $book)
-                                    <option value="{{ $book->id }}" name="author_id">{{ $book->name }}</option>
+                                @foreach($author as $author_tmp)
+                                    <option value="{{ $author_tmp->id }}" name="author_id">{{ $author_tmp->name }}</option>
                                 @endforeach
                             </select>
 
@@ -39,14 +39,14 @@
                         <div class="form-group">
                             <label>Category: <span class="text-danger">*</span></label>
                             <select name="category_id" id="category_id">
-                                @foreach($category as $book)
-                                    <option value="{{ $book->id }}" name="category_id">{{ $book->name }}</option>
+                                @foreach($category as $category_tmp)
+                                    <option value="{{ $category_tmp->id }}" name="category_id">{{ $category_tmp->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Isbn: <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="isbn" name="isbn" placeholder="isbn"
+                            <label>Book Code: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="isbn" name="isbn" placeholder="Book Code"
                                 required>
                             @error('isbn')
                                 <span class="text-danger" role="alert">
@@ -60,11 +60,11 @@
                                 placeholder="published_at">
                         </div>
                         <div class="col-12" style="display: flex; justify-content: space-between;">
-                          <div class="col-8" style="padding-right: 20px;margin-left: -20px">
+                          <div>
                               <a class="btn btn-warning" href="{{ route('book.index') }}">Back</a>
                           </div>
-                          <div class="col-4" style="padding-left: 100px;margin-right: -20px;">
-                              <button type="submit" class="btn btn-primary">Update Book</button>
+                          <div class="justify-content-end">
+                              <button type="submit" class="btn btn-primary">Create</button>
                           </div>
                       </div>
                     </form>

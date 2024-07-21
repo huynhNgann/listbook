@@ -23,12 +23,14 @@ class CreateRequest extends FormRequest
     {
         return [
              "title"=> "required",
+             "isbn"=>"required"
           
         ];
     }
     public function message(){
         return [
-            'title.require'=>'Please enter a title name'
+            'title.require'=>'Please enter a title name',      
+            'isbn.require'=>'Please enter isbn information',
         ];
     }
   

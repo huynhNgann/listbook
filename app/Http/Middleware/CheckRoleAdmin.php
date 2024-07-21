@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 // use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
-class CheckRole
+class CheckRoleAdmin
 {
     /**
      * Handle an incoming request.
@@ -17,17 +17,25 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-      /* $user=Auth::user();
-         if($user->role->name=='subscriber')
-             return redirect('/');*/
         if(Auth::check()){
             $user=Auth::user();
-            if($user->role->name=="subscriber"){
-                return redirect('/');
+            if($user->role->name=="admin"){
+                return $next($request);
+            }
+            switch(true){
+                case $request->is('book/*'):
+                    return redirect('book');
+                    break;
+                case $request->is('category/*'):
+                    return redirect('category');
+                    break;
+                case $request->is('author/*'):
+                    return redirect('author');
+                    break;
             }
         }else{
             return redirect('login');
         }
-        return $next($request);
+        
     }
 }

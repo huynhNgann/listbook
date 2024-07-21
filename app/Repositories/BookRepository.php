@@ -3,40 +3,23 @@
 namespace App\Repositories;
 
 use App\Models\Book;
-use App\Models\Category;
-use App\Models\Author;
-
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class BookRepository
 {
-    protected $book,$author,$category;
+    protected $book;
 
-    public function __construct(Book $book,Category $category,Author $author)
+    public function __construct(Book $book)
     {
         $this->book = $book;
-        $this->category=$category;
-        $this->author=$author;
     }
     public function getAllBook()
     {
-        return $this->book->with('categories','authors')
-        ->select('books.*','categories.*','authors.*', 'authors.name as author_name', 'categories.name as category_name')->paginate(1);
-    }
-    public function getAllCategories()
-    {
-      //  return $this->book->with('categories')->get();
-        return $this->category->get();
-        //return Category::all();
-    }
-    public function getAllAuthors(){
-        //return $this->book->with('authors')->get();
-       return $this->author->get();
-    }
-    public function getAllHavePaginate()
-    {
-        return $this->book->paginate(10);
+        return $this->book->with('category:id,name','author:id,name')
+        ->select('books.*')
+        ->paginate(10);
     }
 
     public function create($data)
@@ -52,7 +35,7 @@ class BookRepository
             return false;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error($e);
+            Log::error('Error creating book: ' . $e->getMessage());
             return false;
         }
     }
@@ -60,9 +43,9 @@ class BookRepository
     public function find(int $id)
     {
         try {
-            return $this->book->find($id);
+            return $this->book->with('category','author')->find($id);
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error('Error finding book: ' . $e->getMessage());
             return false;
         }
     }
@@ -80,7 +63,7 @@ class BookRepository
             return false;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error($e);
+            Log::error('Error updating book: ' . $e->getMessage());
             return false;
         }
     }
@@ -90,7 +73,7 @@ class BookRepository
         try {
             $book = $this->find($id);
             if ($book) {
-                $book->delete();
+                $book->delete(); 
                 DB::commit();
                 return true;
             }
@@ -98,7 +81,7 @@ class BookRepository
             return false;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error($e);
+            Log::error('Error deleting book: ' . $e->getMessage());
             return false;
         }
     }

@@ -22,15 +22,14 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-             "title"=> "required",
-            "author"=>"required",
+            "title"=> "required",
+            "isbn"=>"required"
         ];
     }
     public function message(){
-        return[
-            'name.required'=>'Please enter a title',
-            'biography.required'=>'Please enter a biography',
+        return [
+            'title.require'=>'Please enter a title name',
+            'isbn.require'=>'Please enter isbn information',
         ];
     }
-  
 }
